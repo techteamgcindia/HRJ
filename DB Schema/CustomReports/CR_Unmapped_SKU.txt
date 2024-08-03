@@ -1,0 +1,12 @@
+Symphony Custom Report Input File
+Report Description: Unmapped SKU
+file created:
+[Query Start Point]
+
+
+select sl.stockLocationName,sl.stockLocationDescription, sls.locationSkuName,sls.bufferSize,sls.inventoryAtSite,sls.inventoryAtTransit,sls.inventoryAtProduction from Symphony_StockLocationSkus sls
+join Symphony_StockLocations sl on sl.stockLocationID=sls.stockLocationID 
+
+where sl.slPropertyID6=122 and (sls.inventoryAtSite+sls.inventoryAtTransit+sls.inventoryAtProduction)>0  and sl.stockLocationName in (select sl from Client_STATUS_TEMP_Excep)   and sl.stockLocationName + '|' + locationSkuName not in (select sl + '|' + SKU from Client_STATUS_TEMP_Excep)
+
+[Query End Point]

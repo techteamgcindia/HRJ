@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: 
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_JBD_PO_from_Baddi_plant_to_depots]
+
+
+[Query End Point]

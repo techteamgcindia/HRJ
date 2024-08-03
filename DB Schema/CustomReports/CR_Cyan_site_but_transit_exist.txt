@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: Cyan Site but Transit exist
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_Exception_Site_Cyan_Transit_exist]
+
+
+[Query End Point]

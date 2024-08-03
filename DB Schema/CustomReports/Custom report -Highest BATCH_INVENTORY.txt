@@ -1,0 +1,32 @@
+Symphony Custom Report Input File
+Report Description: Highest batch number
+file created:
+[Query Start Point]
+
+drop table client_temp_batch_inv
+select
+ #a.SKU as SKU
+ ,#a.[Stock Location] as SL
+ 
+ ,#a.[Batch Number] as batch
+ ,#a.Year as year
+ ,#a.Month as month
+ ,#a.Day as [Date]
+ ,case when #a.Inv_at_site_Qty<0 then 0 else #a.Inv_at_site_Qty end as [Inv_at_site_Qty]
+into client_temp_batch_inv from (select sku as SKU
+       ,sl as [Stock Location]
+       ,cast (CASE WHEN CHARINDEX('-',INV_Site) > 0 THEN SUBSTRING(INV_Site,CHARINDEX('-',INV_Site),LEN(INV_Site)) + SUBSTRING(INV_Site,0,CHARINDEX('-',INV_Site))
+                                                 ELSE INV_Site
+                                                 END as decimal(20,3))as Inv_at_site_Qty
+	,batch as [Batch Number]
+	
+        ,YEAR
+        ,MONTH
+        ,DAY
+	FROM Client_batchinv)#a  where #a.Inv_at_site_Qty>0 
+	
+
+	select a.SL,a.SKU,batch,Inv_at_site_Qty  from client_temp_batch_inv a 
+	inner join (select sku,sl,max(Inv_at_site_Qty) as qty from client_temp_batch_inv group by SKU,SL) b on b.SKU=a.SKU and b.SL=a.SL and b.qty=a.Inv_at_site_Qty
+
+[Query End Point]

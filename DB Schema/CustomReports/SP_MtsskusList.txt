@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: DPLM update
+file created:
+[Query Start Point]
+
+EXEC [dbo].[SP_Mtsskus_List]
+
+
+[Query End Point]

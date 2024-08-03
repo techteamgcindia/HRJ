@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: Replinishment recommendation for JBD SW CWH
+file created:
+[Query Start Point]
+
+EXEC [dbo].[SP_CRS_Repl_recommend_for_JBD_SW_CWH_]
+
+
+[Query End Point]

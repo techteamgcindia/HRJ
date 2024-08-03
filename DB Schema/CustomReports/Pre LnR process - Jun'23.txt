@@ -1,0 +1,29 @@
+
+1. rename file name in SP 'Client_SP_NewStatus'
+
+2. consolidate STATUS_site_RM% files in input folder and file name should be STATUS_site_RM_yyyy_mm_dd
+
+3. rename file name in SP 'Client_SP_Site_Qty_Reset_newD20'
+
+3,1 STATUS_site_RM% connsolidte to STATUS_site_RM_2023_06_23
+
+4. rename file name in SP 'Client_SP_NewStatus'
+
+5. consolidate STATUS_TRANSIT_Z% files in input folder and file name should be STATUS_TRANSIT_Z_yyyy_mm_dd
+
+6. rename file name in SP 'Client_SP_transit_Qty_Reset_newD20'
+
+7. STATUS_TRAN_RM% connsolidte to STATUS_TRAN_RM_2023_06_23
+
+8. rename file in SP Client_SP_PARENT_CHILD_BEFORE_LNR
+
+9. rename file in SP Client_SP_PARENT_CHILD_BEFORE_LNR_1
+
+
+10. rename file in SP sp_EquivSKUCombineTransactions
+
+
+11. rename file in SP Client_SP_PRODUCTION_FILE_CONSOLIDATION
+
+12. rename file in SP Client_SP_Location_conversion_UpdateSKUs_Pendi
+

@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: Dealer Replenishement
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_Dealer_Replenishment]
+
+
+[Query End Point]

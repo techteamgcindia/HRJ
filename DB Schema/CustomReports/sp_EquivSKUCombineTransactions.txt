@@ -1,0 +1,149 @@
+USE [SymphonyPT]  --Pls provide the right DB name
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[sp_EquivSKUCombineTransactions]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[sp_EquivSKUCombineTransactions]
+GO
+
+USE [SymphonyPT]  --Pls provide the right DB name
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[sp_EquivSKUCombineTransactions] 
+AS
+BEGIN
+
+
+IF (OBJECT_ID('Client_TRANSACTIONS_TEMP') IS NOT NULL)
+drop table Client_TRANSACTIONS_TEMP;
+
+create table Client_TRANSACTIONS_TEMP
+(
+TransType nvarchar(10),
+Origin nvarchar(100),
+Destination nvarchar(100),
+--AdjustInventory int,
+SKUName nvarchar(100),
+Quantity int,
+Year nvarchar(10),
+Month nvarchar(10),
+Day nvarchar(10),
+Remarks nvarchar(100),
+) 
+
+IF (OBJECT_ID('allfilenames') IS NOT NULL)
+drop table allfilenames;
+
+IF (OBJECT_ID('bulkact') IS NOT NULL)
+drop table bulkact;
+
+CREATE TABLE ALLFILENAMES(WHICHPATH VARCHAR(255),WHICHFILE varchar(255))
+CREATE TABLE BULKACT(RAWDATA VARCHAR (8000))
+declare @filename varchar(255),
+        @path     varchar(255),
+        @sql      varchar(8000),
+        @cmd      varchar(1000)
+
+
+
+SET @path = 'E:\SymphonyData\'
+SET @cmd = 'dir "' + @path + '" *.csv /b'
+INSERT INTO  ALLFILENAMES(WHICHFILE)
+EXEC Master..xp_cmdShell @cmd
+UPDATE ALLFILENAMES SET WHICHPATH = @path where WHICHPATH is null
+
+--cursor loop
+    declare c1 cursor for SELECT WHICHPATH,WHICHFILE FROM ALLFILENAMES where WHICHFILE like 'TRANSACTIONS%.csv%'
+    open c1
+    fetch next from c1 into @path,@filename
+    While @@fetch_status <> -1
+      begin
+      --bulk insert won't take a variable name, so make a sql and execute it instead:
+       set @sql = 'BULK INSERT Client_TRANSACTIONS_TEMP FROM ''' + @path + @filename + ''' '
+           + '     WITH ( 
+                   FIELDTERMINATOR = '','', 
+                   ROWTERMINATOR = ''\n'', 
+                   FIRSTROW = 2 
+                ) '
+    print @sql
+    exec (@sql)
+
+      fetch next from c1 into @path,@filename
+      end
+    close c1
+    deallocate c1
+    
+	-- select * from Client_TRANSACTIONS_TEMP
+
+/*	update ctt set ctt.skuname=ces.mainsku
+	 from Client_TRANSACTIONS_TEMP ctt
+	join Client_EquivSKUs ces on ces.EquivSKU = CTT.SKUName */
+
+
+--declare @cmd1 varchar(1000)
+--set @cmd1 = 'move "d:\SymphonyFolders\PreprocFolder\input\"Transactions*.* "d:\SymphonyFolders\PreprocFolder\history\"'
+--EXEC Master..xp_cmdShell @cmd1
+	
+--Declare @cmd2 varchar(1000)
+--set @cmd2 = 'sqlcmd -S "WINDOWS-6D75MIB" -d "EASYBUYRETAIL7" -Q "set nocount on; select * from Client_TRANSACTIONS_Temp;" -o "d:\SymphonyFolders\InputFolder\Transactions_ %date:~-4,4%%date:~-10,2%%date:~-7,2%.csv" -s"," -W '
+--exec master.dbo.xp_cmdshell @cmd2
+
+--Delete from Client_TRANSACTIONS_TEMP;
+
+
+
+
+
+
+	
+	
+IF (OBJECT_ID('Client_TRANSACTIONS_TEMP2') IS NOT NULL)
+drop table Client_TRANSACTIONS_TEMP2;
+
+create table Client_TRANSACTIONS_TEMP2
+(
+TransType nvarchar(10),
+Origin nvarchar(100),
+Destination nvarchar(100),
+--AdjustInventory int,
+SKUName nvarchar(100),
+Quantity int,
+Year nvarchar(10),
+Month nvarchar(10),
+Day nvarchar(10),
+Remarks nvarchar(100),
+)
+
+--select * from Client_EquivSKUs
+
+Insert into Client_TRANSACTIONS_TEMP2
+select ctt.* 
+FROM Client_TRANSACTIONS_TEMP CTT
+Join Client_EquivSKUs CESKU on CESKU.EquivSKU = CTT.SKUName 
+
+Delete CTT
+ from Client_TRANSACTIONS_TEMP CTT 
+JOIN Client_EquivSKUs CESKU on CESKU.EquivSKU = CTT.SKUName 
+
+INSERT into Client_TRANSACTIONS_TEMP
+select CTT2.TransType, CTT2.Origin, CTT2.Destination, CESKU.MainSKU, sum(CTT2.Quantity), CTT2.Year, CTT2.Month, CTT2.Day,CTT2.Remarks
+from Client_TRANSACTIONS_TEMP2  CTT2
+JOIN Client_EquivSKUs CESKU on CESKU.EquivSKU = CTT2.SKUName
+Group by CTT2.TransType, CTT2.Origin, CTT2.Destination, CESKU.MainSKU, CTT2.Year, CTT2.Month, CTT2.Day,CTT2.Remarks;
+
+Delete from Client_TRANSACTIONS_TEMP2;
+
+--select * from Client_TRANSACTIONS_Temp
+
+Declare @cmd2 varchar(1000)
+set @cmd2 = 'sqlcmd -S "WINDOWS-6D75MIB" -d "EASYBUYRETAIL7" -Q "set nocount on; select * from Client_TRANSACTIONS_Temp;" -o "d:\SymphonyFolders\InputFolder\Transactions_ %date:~-4,4%%date:~-10,2%%date:~-7,2%.csv" -s"," -W '
+exec master.dbo.xp_cmdshell @cmd2
+
+Delete from Client_TRANSACTIONS_TEMP;
+
+END

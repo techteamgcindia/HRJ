@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: 
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_IPNR_STPO_for_IPNR_Morbi_3100_from_2500_2900]
+
+
+[Query End Point]

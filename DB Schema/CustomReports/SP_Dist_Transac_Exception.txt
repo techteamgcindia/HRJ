@@ -1,0 +1,43 @@
+USE [SYMPHONY_HRJ]
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Client_SP_Dist_Transac_Exception]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[Client_SP_Dist_Transac_Exception]
+GO
+
+USE [SYMPHONY_HRJ]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Client_SP_Dist_Transac_Exception]
+AS
+BEGIN
+
+
+SELECT sl.stockLocationName
+      ,sl.stockLocationDescription
+      ,case when (max(t.reportedDate)>max(isnull(grn.Last_IN_Transaction,0))) then max(t.reportedDate) else max(grn.Last_IN_Transaction) end as Last_Transaction_Date
+      ,max(t.reportedDate) as Last_OUT_Transaction
+      ,max(grn.Last_IN_Transaction) as Last_IN_Transaction
+  FROM [SYMPHONY_HRJ].[dbo].[Symphony_Transactions] t
+  join Symphony_StockLocations sl on sl.stockLocationID=t.sender
+  left join (SELECT sl.stockLocationID
+      ,max(t.reportedDate) as Last_IN_Transaction
+      
+  FROM [SYMPHONY_HRJ].[dbo].[Symphony_Transactions] t
+  join Symphony_StockLocations sl on sl.stockLocationID=t.receiver
+  where sl.slPropertyID6=122
+  group by sl.stockLocationID) grn on grn.stockLocationID=t.sender
+
+  where sl.slPropertyID6=122 --and sl.stockLocationName='KL0D0004'
+  group by sl.stockLocationName,sl.stockLocationDescription
+   
+
+
+  end

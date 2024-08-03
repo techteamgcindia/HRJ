@@ -1,0 +1,8 @@
+Symphony Custom Report Input File
+Report Description: Sale data Format
+file created:
+[Query Start Point]
+
+exec  sp_report_avrp_02  
+  
+[Query End Point]

@@ -1,0 +1,32 @@
+USE [SYMPHONY_HRJ]
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Client_SP_MTSSKUsUpdate]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[Client_SP_MTSSKUsUpdate]
+GO
+
+USE [SYMPHONY_HRJ]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Client_SP_MTSSKUsUpdate]
+AS
+BEGIN
+
+update sls
+set sls.custom_num6 = batch.Inv_at_site_Qty
+from [SYMPHONY_HRJ].[dbo].[Symphony_StockLocationSkus] sls
+join Symphony_StockLocations sl on sl.stockLocationID=sls.stockLocationID
+join Symphony_SKUs s on s.skuID=sls.skuID
+join (select a.SL,a.SKU,batch,Inv_at_site_Qty  from client_temp_batch_inv a 
+	inner join (select sku,sl,max(Inv_at_site_Qty) as qty from client_temp_batch_inv group by SKU,SL) b on b.SKU=a.SKU and b.SL=a.SL and b.qty=a.Inv_at_site_Qty
+) batch on batch.SL=sl.stockLocationName and batch.SKU=s.skuName
+where sl.stockLocationName='2400' 
+
+ end

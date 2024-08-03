@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: Site stock summary
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_Site_Stock_Summary]
+
+
+[Query End Point]

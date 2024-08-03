@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: STO for JBD
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_STO_JBD]
+
+
+[Query End Point]

@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: Data MTA and MTO order combine report
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_MTA_MTO_combine_Report_JBD]
+
+
+[Query End Point]

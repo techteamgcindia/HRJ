@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: Dealer Replenishement REGION and Division WISE
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_Dealer_Replenishment_Region_and_division_wise] @REGION='S2N',@Division='ENDURA'
+
+
+[Query End Point]

@@ -1,0 +1,43 @@
+USE [SYMPHONY_HRJ]
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Client_SP_Site_Stock_Summary]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[Client_SP__Site_Stock_Summary]
+GO
+
+USE [SYMPHONY_HRJ]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Client_SP_Site_Stock_Summary]
+AS
+BEGIN
+  
+
+
+SELECT sl.stockLocationName      
+       ,sl.stockLocationDescription 
+       ,sum(slsh.inventoryAtSite) as Total_Inv_at_Site
+    
+    ,slsh.updateDate      
+      --,slsh.[consumption]        
+  FROM [Symphony_StockLocationSkuHistory] slsh      
+  join Symphony_StockLocations sl on sl.stockLocationID=slsh.stockLocationID      
+  --join Symphony_SKUs s on s.skuID=slsh.skuID      
+  left join Symphony_StockLocationSkus sls on sls.stockLocationID=slsh.stockLocationID and sls.skuID=slsh.skuID      
+  --left join Symphony_SKUsPropertyItems spi on spi.skuItemID=sls.skuPropertyID1  
+  --left join Symphony_UOM u on u.uomID=sls.uomID  
+  where slsh.updatedate>=convert(date, getdate()-30)     
+  /*Condition added on 2019-08-08 by bharat*/    
+     -- commented SL by bharat on 2019-08-05  
+  --and sl.stockLocationName in ('2400','7410') --and s.skuName='U0004FUCOAL0405'      
+  /*END - Condition added on 2019-08-05 by bharat*/   
+  group by sl.stockLocationName,slsh.updateDate,sl.stockLocationDescription  
+  order by sl.stockLocationName,slsh.updateDate
+  end

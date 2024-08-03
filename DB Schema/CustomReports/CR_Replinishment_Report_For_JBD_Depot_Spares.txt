@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: Replinishment_Report_For_JBD_Depot_Spares
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Replinishment_Report_For_JBD_Depot_Spares]
+
+
+[Query End Point]

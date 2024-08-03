@@ -1,0 +1,48 @@
+USE [SYMPHONY_HRJ]
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Client_SP_MTS_History]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[Client_SP_MTS_History]
+GO
+
+USE [SYMPHONY_HRJ]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Client_SP_MTS_History]
+AS
+BEGIN
+
+
+SELECT sl.stockLocationName
+      ,s.skuName
+	  ,slsh.bufferSize
+	  ,slsh.inventoryAtSite
+	  ,slsh.inventoryAtTransit
+	  ,slsh.inventoryAtProduction
+	  ,case when slsh.bufferSize=0 and (slsh.inventoryAtSite + slsh.inventoryAtTransit+slsh.inventoryAtProduction)=0 then 'Green' else
+	  case when slsh.bufferSize=0 and (slsh.inventoryAtSite + slsh.inventoryAtTransit+slsh.inventoryAtProduction)>0 then 'Cyan' else
+	  case when slsh.bufferSize>0 and (slsh.inventoryAtSite + slsh.inventoryAtTransit+slsh.inventoryAtProduction)=0 then 'Black' else
+	  case when slsh.bufferSize=(slsh.inventoryAtSite + slsh.inventoryAtTransit+slsh.inventoryAtProduction) then 'Green' else
+	  case when slsh.bufferSize<(slsh.inventoryAtSite + slsh.inventoryAtTransit+slsh.inventoryAtProduction) then 'Cyan' else
+	  case when slsh.bufferSize>0 and (slsh.inventoryAtSite + slsh.inventoryAtTransit+slsh.inventoryAtProduction)/slsh.bufferSize>1 then 'Cyan' else
+	  case when slsh.bufferSize>0 and (slsh.inventoryAtSite + slsh.inventoryAtTransit+slsh.inventoryAtProduction)/slsh.bufferSize between 0.6601 and 1 then 'Green' else
+	  case when slsh.bufferSize>0 and (slsh.inventoryAtSite + slsh.inventoryAtTransit+slsh.inventoryAtProduction)/slsh.bufferSize between 0.3301 and 0.66 then 'Yellow' else
+	  case when slsh.bufferSize>0 and (slsh.inventoryAtSite + slsh.inventoryAtTransit+slsh.inventoryAtProduction)/slsh.bufferSize between 0.001 and 0.33 then 'Red' 
+	   end end end end end end end end end as [BP Colour]
+	   ,slsh.updateDate
+      --,slsh.[consumption]  
+  FROM [Symphony_StockLocationSkuHistory] slsh
+  join Symphony_StockLocations sl on sl.stockLocationID=slsh.stockLocationID
+  join Symphony_SKUs s on s.skuID=slsh.skuID
+  --join Symphony_StockLocationSkus sls on sls.stockLocationID=slsh.stockLocationID and sls.skuID=slsh.skuID
+  where slsh.updatedate>=convert(date, getdate()-60) and sl.stockLocationName='2400' --and s.skuName='U0004FUCOAL0405'
+  order by slsh.updateDate
+  
+  end

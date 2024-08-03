@@ -1,0 +1,35 @@
+USE [SYMPHONY_HRJ]
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Client_SP_UOM_Conversion_Report]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[Client_SP_UOM_Conversion_Report]
+GO
+
+USE [SYMPHONY_HRJ]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Client_SP_UOM_Conversion_Report]
+AS
+BEGIN
+
+
+
+select sl.stockLocationName as SL,sl.stockLocationDescription as SL_Description,  sls.locationSkuName as SKU,
+       cast(bufferSize as decimal(10,0)) as Buffer_Size,cast(inventoryAtSite as decimal(10,0)) as Inv_Site,
+	   cast(inventoryAtTransit as decimal(10,0)) as Inv_Transit ,cast(custom_num5 as decimal(10,0)) as Pack_Size,
+      cast(inventoryAtTransit*custom_num5 as decimal(10,0))  as Rev_Inv_at_transit,
+ cast(  case when bufferSize-(inventoryAtSite+(inventoryAtTransit*custom_num5)+inventoryAtProduction)>0 then
+    bufferSize-(inventoryAtSite+(inventoryAtTransit*custom_num5)+inventoryAtProduction) else 0 end as decimal(10,0)) as Gap_qty 
+	 from Symphony_StockLocationSkus sls
+join Symphony_StockLocations sl on sl.stockLocationID=sls.stockLocationID
+
+ where custom_num5 is not null and bufferSize-(inventoryAtSite+(inventoryAtTransit*custom_num5)+inventoryAtProduction)>0
+
+ end

@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: MTS update Max qty 
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_MTSSKUsUpdate]
+
+
+[Query End Point]

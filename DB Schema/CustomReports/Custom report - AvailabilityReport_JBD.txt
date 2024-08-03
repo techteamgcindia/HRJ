@@ -1,0 +1,8 @@
+Symphony Custom Report Input File
+Report Description:
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_AvailabilityReport_JBD]
+
+[Query End Point]

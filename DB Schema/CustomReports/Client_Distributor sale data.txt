@@ -1,0 +1,22 @@
+Symphony Custom Report Input File
+Report Description: Sale data Format
+file created:
+[Query Start Point]
+
+truncate table Client_DIST_SALE_DATA
+
+   BULK INSERT Client_DIST_SALE_DATA
+FROM 'E:\SymphonyData\Custom Reports\Distributor_sale_data\Sale_data.csv'
+WITH
+(
+FIRSTROW = 2,
+FIELDTERMINATOR = ',',
+ROWTERMINATOR = '\n'
+)
+
+
+SELECT  * 
+	
+ FROM [SYMPHONY_HRJ].[dbo].[Client_DIST_SALE_DATA]
+  
+[Query End Point]

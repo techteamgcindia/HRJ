@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: Dist_tran_exception
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_Dist_Transac_Exception]
+
+
+[Query End Point]

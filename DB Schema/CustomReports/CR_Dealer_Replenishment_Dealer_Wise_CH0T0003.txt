@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: Dealer Replenishement DEALER WISE
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_Dealer_Replenishment_Dealerwise] @DEALER='AP0A0008'
+
+
+[Query End Point]

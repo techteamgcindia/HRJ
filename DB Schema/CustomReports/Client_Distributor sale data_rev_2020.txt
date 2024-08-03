@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: Sale data Format
+file created:
+[Query Start Point]
+
+
+SELECT  * FROM [SYMPHONY_HRJ].[dbo].[Client_DIST_SALE_DATA]
+  
+[Query End Point]

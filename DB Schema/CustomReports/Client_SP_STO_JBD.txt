@@ -1,0 +1,40 @@
+USE [SYMPHONY_HRJ]
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Client_SP_STO_JBD]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[Client_SP_STO_JBD]
+GO
+
+USE [SYMPHONY_HRJ]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Client_SP_STO_JBD]
+AS
+BEGIN
+
+
+SELECT  sl1.stockLocationName as [Supplying Plant]
+         ,sls.locationSkuName as Material
+         	,sls.replenishmentQuantity
+        ,CONVERT(VARCHAR(10), GETDATE(), 103) as [Delivery Date]
+         ,sl.stockLocationName as [Plant]
+	
+ FROM [SYMPHONY_HRJ].[dbo].[Symphony_StockLocationSkus] sls
+  join Symphony_StockLocations sl on sls.stockLocationID=sl.stockLocationID
+  join Symphony_StockLocations sl1 on sls.originStockLocation=sl1.stockLocationID 
+  left join Symphony_SKUsPropertyItems spi on spi.skuItemID=sls.skuPropertyID1
+  left join Symphony_SKUsPropertyItems spi1 on spi1.skuItemID=sls.skuPropertyID6
+where sls.inventoryNeeded>0 and sls.bufferSize>0 
+ and SLS.isDeleted = 0 and sl.stockLocationType=5 and sl.isDeleted=0 and sls.custom_txt3='JBD'    and
+ sls.avoidReplenishment=0 and sl.stockLocationName not in ('7550','4750') and sl1.stockLocationName in 
+ ('4750','5135','5160','7550','8110','109618','106205')
+
+
+ end

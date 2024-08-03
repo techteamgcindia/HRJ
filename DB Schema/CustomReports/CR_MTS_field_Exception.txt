@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: MTS_fields_exception
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_MTS_field_Exception]
+
+
+[Query End Point]

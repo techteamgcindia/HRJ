@@ -1,0 +1,37 @@
+USE [SYMPHONY_HRJ]
+GO
+
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Replinishment_Report_For_JBD_Depot_Spares]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[Replinishment_Report_For_JBD_Depot_Spares]
+GO
+
+USE [SYMPHONY_HRJ]
+GO
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[Replinishment_Report_For_JBD_Depot_Spares]
+AS
+BEGIN
+
+SELECT  sl.stockLocationName as [Store],sl.stockLocationDescription as [Store Description],
+  sls.locationSkuName as SKU,sls.custom_txt8 as [Parent Code]  ,sls.skuDescription as [SKU Description],
+  SLS.custom_txt3 [Business],spi.skuItemName [Division], SLS.custom_txt5 [Material Freight Group],spi1.skuItemName [Design],spi5.skuItemName as [HBT_Store],
+  sls.custom_txt10 as [HBT National],sl1.stockLocationName as [Origin WH]  ,sl1.stockLocationDescription as [Origin WH Description]
+  ,sls.bufferSize  ,sls.inventoryAtSite as Site_Qty  ,sls.inventoryAtTransit as Transit_Qty  ,1-bpProduction as [BP%],
+  case when productionColor=0 then 'Cyan' when productionColor=1 then 'Green' when productionColor=2 then 'yellow'when 
+  productionColor=3 then 'Red'when productionColor=4 then 'Black' end [BP Color],sls.inventoryNeeded,sls.replenishmentQuantity  
+  FROM [SYMPHONY_HRJ].[dbo].[Symphony_StockLocationSkus] sls join Symphony_StockLocations sl on sls.stockLocationID=sl.stockLocationID 
+  join Symphony_StockLocations sl1 on sls.originStockLocation=sl1.stockLocationID left join Symphony_SKUsPropertyItems spi on 
+  spi.skuItemID=sls.skuPropertyID1     left join Symphony_SKUsPropertyItems spi5 on spi5.skuItemID=sls.skuPropertyID5     
+  left join Symphony_SKUsPropertyItems spi1 on spi1.skuItemID=sls.skuPropertyID6
+  where sls.inventoryNeeded>0 and sls.bufferSize>0 and sls.custom_txt3 like 'JBD%' and   sls.custom_txt5 like 'JBDSPARE%'   and SLS.isDeleted = 0 and 
+  sl.stockLocationType=5 and sl.isDeleted=0 and   sls.avoidReplenishment=0 and sl.stockLocationName not like '7550'     
+
+  
+  end

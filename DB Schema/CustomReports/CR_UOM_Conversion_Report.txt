@@ -1,0 +1,9 @@
+Symphony Custom Report Input File
+Report Description: UOM_Conversion
+file created:
+[Query Start Point]
+
+EXEC [dbo].[Client_SP_UOM_Conversion_Report]
+
+
+[Query End Point]

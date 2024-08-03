@@ -1,0 +1,24 @@
+Symphony Custom Report Input File
+Report Description: STO Format
+file created:
+[Query Start Point]
+
+SELECT  sl1.stockLocationName as [Supplying Plant]
+         ,sls.locationSkuName as Material
+		 ,sls.skuDescription 
+		 ,sls.custom_txt3 as Business
+		 ,spi.skuItemName as Divison
+         	,sls.replenishmentQuantity
+        ,CONVERT(VARCHAR(10), GETDATE(), 103) as [Delivery Date]
+         ,sl.stockLocationName as [Plant]
+	
+ FROM [SYMPHONY_HRJ].[dbo].[Symphony_StockLocationSkus] sls
+  join Symphony_StockLocations sl on sls.stockLocationID=sl.stockLocationID
+  join Symphony_StockLocations sl1 on sls.originStockLocation=sl1.stockLocationID 
+  left join Symphony_SKUsPropertyItems spi on spi.skuItemID=sls.skuPropertyID1
+  left join Symphony_SKUsPropertyItems spi1 on spi1.skuItemID=sls.skuPropertyID6
+where sls.inventoryNeeded>0 and sls.bufferSize>0 
+ and SLS.isDeleted = 0 and sl.stockLocationType=5 and sl.isDeleted=0 and 
+ sls.avoidReplenishment=0 and sl.stockLocationName not in ('7550','4750')
+
+[Query End Point]
